@@ -2,19 +2,17 @@ package com.jegadeesan.myapplication.presentation.activity.people
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jegadeesan.myapplication.R
+import com.jegadeesan.myapplication.data.model.PeopleList
 import com.jegadeesan.myapplication.databinding.ActivityMainBinding
 import com.jegadeesan.myapplication.presentation.adapter.PeopleAdapter
 import com.jegadeesan.myapplication.presentation.viewmodel.PeopleViewModel
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
-    val peopleViewModel: PeopleViewModel by inject()
+    private val peopleViewModel: PeopleViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,16 +29,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-
     private fun initData() {
-        peopleViewModel.getPeople().observe(this, Observer {
+        peopleViewModel.getPeople().observe(this, {
             it?.let { peopleList ->
-                val recyclerView = binding.peopleRecyclerView
-                recyclerView.layoutManager = LinearLayoutManager(this)
-                recyclerView.adapter = PeopleAdapter(peopleList.people)
+                initRecyclerView(peopleList)
             }
-
         })
+    }
+
+    private fun initRecyclerView(peopleList: PeopleList) {
+        val recyclerView = binding.peopleRecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = PeopleAdapter(peopleList.people)
     }
 
 }
